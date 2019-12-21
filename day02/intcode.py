@@ -1,40 +1,76 @@
+"""intcode for Day2 of Advent of Code 2019."""
+
 import os
 
-with open(
-    # os.path.join(os.getcwd(), "test.txt")
-    os.path.join(os.getcwd(), "input.txt")
-    # os.path.join(os.getcwd(), "1202_alarm_input.txt")
-) as input_file:
-    input = input_file.read().rstrip().split(",")
 
-input = [int(i) for i in input]
+def compute_intcode(noun: int, verb: int) -> int:
+    """
+    Computes output for intcode inputs.
 
-position = 0
+    Args:
+        noun: input 1, to be inserted at position 1
+        verb: input 2, to be inserted at position 2
+    
+    Returns:
+        Value at position 0.
+    """
+    with open(
+        os.path.join(os.getcwd(), "starting_memory.txt")
+    ) as starting_memory_file:
+        memory_as_strings = starting_memory_file.read().rstrip().split(",")
 
-print(f"input: {input}, length is: {len(input)}")
+    memory = [int(i) for i in memory_as_strings]
+    memory[1] = noun
+    memory[2] = verb
 
-# for opcode in input:
-    # print(f"at position {position}, opcode is: {opcode}")
-    # position += 1
-while position < len(input):
-    print(f"at position {position}, opcode is: {input[position]}")
+    instruction_pointer = 0
 
-    if input[position] == 1:
-        print(f"input1 value: {input[input[position+1]]}")
-        print(f"input2 value: {input[input[position+2]]}")
-        print(f"output to position: {input[input[position+3]]}")
-        input[input[position+3]] = input[input[position+1]] + input[input[position+2]]
-        position += 4
-    elif input[position] == 2:
-        input[input[position+3]] = input[input[position+1]] * input[input[position+2]]
-        position += 4
-    elif input[position] == 99:
+    # print(f"memory: {memory}, length is: {len(memory)}")
+
+    while instruction_pointer < len(memory):
+        # print(f"at position {position}, opcode is: {memory[position]}")
+
+        if memory[instruction_pointer] == 1:
+            # print(f"memory1 value: {memory[memory[position+1]]}")
+            # print(f"memory2 value: {memory[memory[position+2]]}")
+            # print(f"output to position: {memory[memory[position+3]]}")
+            memory[memory[instruction_pointer + 3]] = (
+                memory[memory[instruction_pointer + 1]]
+                + memory[memory[instruction_pointer + 2]]
+            )
+            instruction_pointer += 4
+        elif memory[instruction_pointer] == 2:
+            memory[memory[instruction_pointer + 3]] = (
+                memory[memory[instruction_pointer + 1]]
+                * memory[memory[instruction_pointer + 2]]
+            )
+            instruction_pointer += 4
+        elif memory[instruction_pointer] == 99:
+            break
+        else:
+            print(
+                f"something went wrong, halting program at position {instruction_pointer} on value {memory[instruction_pointer]}!"
+            )
+            break
+
+    # print(f"at end of program, memory is: {memory}")
+    return memory[0]
+
+
+print(f"for inputs 1 and 1, compute_intcode(1,1) is: {compute_intcode(12,2)}")
+
+inner_loop_broken = False
+
+for noun in range(100):
+    for verb in range(100):
+        if compute_intcode(noun, verb) == 19690720:
+            print(
+                f"answer found! noun is {noun} and verb is {verb}. 100 * noun + verb is: {100 * noun + verb}"
+            )
+            inner_loop_broken = True
+            break
+    if inner_loop_broken:
         break
-    else:
-        print(f"something went wrong, halting program at position {position} on value {input[position]}!")
-        break
 
-
-
-print(f"at end of program, input is: {input}")
-
+if not inner_loop_broken:
+    print(f"answer not found!")
