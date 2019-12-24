@@ -25,15 +25,8 @@ def compute_intcode(noun: int, verb: int) -> int:
 
     instruction_pointer = 0
 
-    # print(f"memory: {memory}, length is: {len(memory)}")
-
     while instruction_pointer < len(memory):
-        # print(f"at position {position}, opcode is: {memory[position]}")
-
         if memory[instruction_pointer] == 1:
-            # print(f"memory1 value: {memory[memory[position+1]]}")
-            # print(f"memory2 value: {memory[memory[position+2]]}")
-            # print(f"output to position: {memory[memory[position+3]]}")
             memory[memory[instruction_pointer + 3]] = (
                 memory[memory[instruction_pointer + 1]]
                 + memory[memory[instruction_pointer + 2]]
@@ -53,7 +46,6 @@ def compute_intcode(noun: int, verb: int) -> int:
             )
             break
 
-    # print(f"at end of program, memory is: {memory}")
     return memory[0]
 
 
